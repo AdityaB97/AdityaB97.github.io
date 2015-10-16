@@ -405,7 +405,7 @@ class BodyguardAnt(Ant):
     # BEGIN Problem 7
     container = True
     food_cost = 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 7
 
     def __init__(self):
@@ -429,13 +429,20 @@ class TankAnt(BodyguardAnt):
     damage = 1
     # BEGIN Problem 8
     food_cost = 6
+    armor = 2
     container = True
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 8
 
     def action(self, colony):
-        # BEGIN Problem 8
-        "*** REPLACE THIS LINE ***"
+        # # BEGIN Problem 8
+        lst = list(self.place.bees)
+        for x in lst:
+            x.reduce_armor(self.damage)
+        if (self.ant) == None:
+            return
+        else:
+            self.ant.action(colony)
         # END Problem 8
 
 class QueenAnt(Ant):  # You should change this line
@@ -443,13 +450,16 @@ class QueenAnt(Ant):  # You should change this line
 
     name = 'Queen'
     # BEGIN Problem 9
-    "*** REPLACE THIS LINE ***"
-    implemented = False   # Change to True to view in the GUI
+    impostor = False
+    implemented = True   # Change to True to view in the GUI
     # END Problem 9
 
     def __init__(self):
         # BEGIN Problem 9
-        "*** REPLACE THIS LINE ***"
+        if Queen.impostor == False:
+            self.impostor == True
+        else:
+            
         # END Problem 9
 
     def action(self, colony):
