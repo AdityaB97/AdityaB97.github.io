@@ -205,7 +205,11 @@ class ThrowerAnt(Ant):
 
     name = 'Thrower'
     implemented = True
-    damage = food_cost = 4
+    damage = 1
+    food_cost = 4
+    armor = 1
+    min_range = None
+    max_range = None
 
     def nearest_bee(self, hive):
         """Return the nearest Bee in a Place that is not the Hive, connected to
@@ -214,8 +218,33 @@ class ThrowerAnt(Ant):
         This method returns None if there is no such Bee (or none in range).
         """
         # BEGIN Problem 3B
-        "*** REPLACE THIS LINE ***"
-        return random_or_none(self.place.bees)
+        current_place = self.place
+        count = 0
+        if self.min_range:
+            while True:
+                if current_place.bees and count > self.min_range:
+                    return random_or_none(current_place.bees)
+                if current_place.entrance is hive:
+                    return None
+                current_place = current_place.entrance
+                count += 1
+        elif self.max_range:
+            while True:
+                if current_place.bees and count < self.max_range:
+                    return random_or_none(current_place.bees)
+                if current_place.entrance is hive:
+                    return None
+                current_place = current_place.entrance
+                count += 1
+        else:
+            while True:
+                if current_place.bees:
+                    return random_or_none(current_place.bees)
+                if current_place.entrance is hive:
+                    return None
+                current_place = current_place.entrance
+
+        #return random_or_none(self.place.bees)
         # END Problem 3B
 
     def throw_at(self, target):
@@ -274,8 +303,12 @@ class LongThrower(ThrowerAnt):
 
     name = 'Long'
     # BEGIN Problem 4B
-    "*** REPLACE THIS LINE ***"
-    implemented = False   # Change to True to view in the GUI
+    min_range = 4
+    food_cost = 2
+    armor = 1
+    def nearest_bee(self, hive):
+        return ThrowerAnt.nearest_bee(self, hive)
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4B
 
 
@@ -284,8 +317,12 @@ class ShortThrower(ThrowerAnt):
 
     name = 'Short'
     # BEGIN Problem 4B
-    "*** REPLACE THIS LINE ***"
-    implemented = False   # Change to True to view in the GUI
+    max_range = 4
+    food_cost = 2
+    armor = 1
+    def nearest_bee(self, hive):
+        return ThrowerAnt.nearest_bee(self, hive)
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4B
 
 
@@ -318,9 +355,14 @@ class NinjaAnt(Ant):
 
 
 # BEGIN Problem 5B
-"*** REPLACE THIS LINE ***"
+class ScubaThrower(ThrowerAnt):
+    name = 'Scuba'
+    food_cost = 5
+    watersafe = True
+    implemented = True
+
 # The ScubaThrower class
- #END Problem 5
+# END Problem 5B
 
 class HungryAnt(Ant):
     """HungryAnt will take three turns to digest a Bee in its place.
@@ -328,23 +370,32 @@ class HungryAnt(Ant):
     """
     name = 'Hungry'
     # BEGIN Problem 6B
-    "*** REPLACE THIS LINE ***"
-    implemented = False   # Change to True to view in the GUI
+    time_to_digest = 3
+    food_cost = 4
+    armor = 1
+
+    # BEGIN Problem 6B
+    implemented = True   # Change to True to view in the GUI
     # END Problem 6B
 
     def __init__(self):
         # BEGIN Problem 6B
-        "*** REPLACE THIS LINE ***"
+        self.digesting = 0
         # END Problem 6B
 
     def eat_bee(self, bee):
         # BEGIN Problem 6B
-        "*** REPLACE THIS LINE ***"
+        bee.reduce_armor(bee.armor)
         # END Problem 6B
 
     def action(self, colony):
         # BEGIN Problem 6B
-        "*** REPLACE THIS LINE ***"
+        if self.digesting > 0:
+            self.digesting -= 1
+        elif random_or_none(self.place.bees) != None:
+            bee = random_or_none(self.place.bees)
+            self.eat_bee(bee)
+            self.digesting = self.time_to_digest
         # END Problem 6B
 
 
